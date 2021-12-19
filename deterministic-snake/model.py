@@ -4,27 +4,23 @@ import torch.optim as optim
 import torch.nn.functional as F
 import os
 
-
-class Linear_QNet(nn.Module):
+class Neural_Network(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
-        self.linear1 = nn.Linear(input_size, hidden_size)
-        self.linear2 = nn.Linear(hidden_size, output_size)
+        self.linear_layer_one = nn.Linear(input_size, hidden_size)
+        self.linear_layer_two = nn.Linear(hidden_size, output_size)
+        self.load_state_dict(torch.load('./saved_state.pth'))
 
-    def forward(self, x):
-        x = F.relu(self.linear1(x))
-        x = self.linear2(x)
-        return x
+    def forward(self, tensor):
+        # activation function
+        tensor = F.relu(self.linear_layer_one(tensor))
+        tensor = self.linear_layer_two(tensor)
+        return tensor 
 
-    def save(self, file_name='model.pth'):
-        model_folder_path = './model'
-        if not os.path.exists(model_folder_path):
-            os.makedirs(model_folder_path)
-
-        file_name = os.path.join(model_folder_path, file_name)
-        torch.save(self.state_dict(), file_name)
-
-
+    def save_state(self, file_name='saved_state.pth'):
+        file_name = os.path.join('./', file_name)
+        torch.save_state(self.state_dict(), file_name)
+        
 class QTrainer:
     def __init__(self, model, lr, discount_rate):
         self.lr = lr
