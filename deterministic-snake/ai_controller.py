@@ -4,11 +4,8 @@ import random
 import numpy as np
 from collections import deque
 from view import SnakeGameAI, Direction, Point
-from model import Neural_Network, QTrainer
+from model import Neural_Network, Reinforcment_Learner
 from view import SnakeGameAI, Direction, Point
-
-
-
 
 class AI_agent:
 
@@ -18,7 +15,7 @@ class AI_agent:
         self.number_of_games = 0
         self.discount_rate = 0.9  
         self.model = Neural_Network(11, 256, 3)
-        self.trainer = QTrainer(self.model, lr=self.learning_rate, discount_rate=self.discount_rate)
+        self.trainer = Reinforcment_Learner(self.model, learning_rate=self.learning_rate, discount_rate=self.discount_rate)
 
     def current_state(self, game):
         head = game.snake[0]
@@ -70,7 +67,7 @@ class AI_agent:
         self.number_of_random_moves = self.number_of_random_moves - self.number_of_games
 
     def learn_from_step(self, state, action, reward, next_state, is_finished):
-        self.trainer.train_step(state, action, reward, next_state, is_finished)
+        self.trainer.learn_from_one_step(state, action, reward, next_state, is_finished)
 
     def next_move(self, state):
         self.reduce_number_of_random_moves()
@@ -109,7 +106,6 @@ def train():
 
             if score > max_score:
                 max_score = score
-                agent.model.save_state()
 
             print('Game Number -> ', agent.number_of_games, 'Score -> ', score, 'Max score -> ', max_score)
 

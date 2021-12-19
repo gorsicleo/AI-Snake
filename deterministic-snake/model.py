@@ -9,59 +9,46 @@ class Neural_Network(nn.Module):
         super().__init__()
         self.linear_layer_one = nn.Linear(input_size, hidden_size)
         self.linear_layer_two = nn.Linear(hidden_size, output_size)
-        file_name = os.path.join('./', 'saved_state.pth')
-        self.load_state_dict(torch.load(file_name))
 
-    def forward(self, tensor):
-        # activation function
-        tensor = F.relu(self.linear_layer_one(tensor))
-        tensor = self.linear_layer_two(tensor)
-        return tensor 
-
-    def save_state(self, file_name='saved_state.pth'):
-        file_name = os.path.join('./', file_name)
-        torch.save_state(self.state_dict(), file_name)
+    def forward(self, x):
+        # activation function -- activates tensor x 
+        x = F.relu(self.linear_layer_one(x))
+        x = self.linear_layer_two(x)
+        return x 
         
-class QTrainer:
-    def __init__(self, model, lr, discount_rate):
-        self.lr = lr
+class Reinforcment_Learner:
+    def __init__(self, model, learning_rate, discount_rate):
+        self.learning_rate = learning_rate
         self.discount_rate = discount_rate
         self.model = model
-        self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
+        self.optimizer = optim.SGD(model.parameters(), learning_rate=self.learning_rate, momentum=0.5)
         self.criterion = nn.MSELoss()
 
-    def train_step(self, state, action, reward, next_state, is_finished):
+    def learn_from_one_step(self, state, action, reward, next_state, is_finished):
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)
         reward = torch.tensor(reward, dtype=torch.float)
-        # (n, x)
 
         if len(state.shape) == 1:
-            # (1, x)
             state = torch.unsqueeze(state, 0)
             next_state = torch.unsqueeze(next_state, 0)
             action = torch.unsqueeze(action, 0)
             reward = torch.unsqueeze(reward, 0)
             is_finished = (is_finished, )
+        
+        prediction_for_next_move = self.model(state)
 
-        # 1: predicted Q values with current state
-        pred = self.model(state)
-
-        target = pred.clone()
+        prediction_after_bellman = prediction_for_next_move.clone()
         for idx in range(len(is_finished)):
             Q_new = reward[idx]
             if not is_finished[idx]:
-                Q_new = reward[idx] + self.discount_rate * \
-                    torch.max(self.model(next_state[idx]))
+                Q_new = reward[idx] + self.discount_rate * torch.max(self.model(next_state[idx]))
 
-            target[idx][torch.argmax(action[idx]).item()] = Q_new
+            prediction_after_bellman[idx][torch.argmax(action[idx]).item()] = Q_new
 
-        # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not is_finished
-        # pred.clone()
-        # preds[argmax(action)] = Q_new
         self.optimizer.zero_grad()
-        loss = self.criterion(target, pred)
+        loss = self.criterion(prediction_after_bellman, prediction_for_next_move)
         loss.backward()
 
         self.optimizer.step()
