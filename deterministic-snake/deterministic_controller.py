@@ -1,5 +1,5 @@
 import math
-from game import SnakeGameAI, Direction, Point
+from view import SnakeGameAI, Direction, Point
 
 
 class DeterministicAgent:
