@@ -7,7 +7,7 @@ class DeterministicAgent:
     def get_state(self, game):
         return [game.food.x, game.food.y, game.head.x, game.head.y]
 
-    def new_action(self, state, game):
+    def next_move(self, state, game):
         point_head = Point(state[2], state[3])
         point_food = Point(state[0], state[1])
 
@@ -103,7 +103,7 @@ def run():
         old_state = agent.get_state(game)
 
         # get move
-        final_move = agent.new_action(old_state, game)
+        final_move = agent.next_move(old_state, game)
 
         # perform move and get new state
         reward, is_finished, score = game.play_step(final_move)

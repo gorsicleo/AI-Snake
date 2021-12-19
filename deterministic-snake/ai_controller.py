@@ -13,14 +13,10 @@ from view import SnakeGameAI, Direction, Point
 class AI_agent:
 
     def __init__(self):
-
-        self.max_memory = 100000
-        self.sample_size = 1000
+        self.number_of_random_moves = 69
         self.learning_rate = 0.001
-        self.n_games = 0
-        self.randomness = 0  
+        self.number_of_games = 0
         self.discount_rate = 0.9  
-        self.memory = deque(maxlen=self.max_memory) 
         self.model = Linear_QNet(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=self.learning_rate, discount_rate=self.discount_rate)
 
@@ -70,65 +66,54 @@ class AI_agent:
 
         return np.array(state, dtype=int)
 
-    def save_progress(self, state, action, reward, next_state, is_finished):
-        self.memory.append((state, action, reward, next_state, is_finished))
+    def reduce_number_of_random_moves(self):
+        self.number_of_random_moves = self.number_of_random_moves - 1
 
-    def learn_from_one_game(self):
-        if len(self.memory) > self.sample_size:
-            mini_sample = random.sample(
-                self.memory, self.sample_size)  # list of tuples
-        else:
-            mini_sample = self.memory
-
-        for state, action, reward, next_state, is_finished in mini_sample:
-            self.trainer.train_step(state, action, reward, next_state, is_finished)
-
-    def learn_from_one_step(self, state, action, reward, next_state, is_finished):
+    def learn_from_step(self, state, action, reward, next_state, is_finished):
         self.trainer.train_step(state, action, reward, next_state, is_finished)
 
-    def new_action(self, state):
-        self.randomness = 80 - self.n_games
-        final_move = [0, 0, 0]
-        if random.randint(0, 200) < self.randomness:
-            move = random.randint(0, 2)
-            final_move[move] = 1
+    def next_move(self, state):
+        self.reduce_number_of_random_moves()
+        final_move_template = [0, 0, 0]
+        if random.randint(0, 155) < self.number_of_random_moves:
+            move_index = random.randint(0, 2)
+            final_move_template[move_index] = 1
         else:
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-            move = torch.argmax(prediction).item()
-            final_move[move] = 1
+            transformed_state_for_neural_network = torch.tensor(state, dtype=torch.float)
+            model_output = self.model(transformed_state_for_neural_network)
+            move_index = torch.argmax(model_output).item()
+            final_move_template[move_index] = 1
 
-        return final_move
+        return final_move_template
 
 
 def train():
-    record = 0
+    max_score = 0
     agent = AI_agent()
     game = SnakeGameAI()
     while True:
         old_state = agent.current_state(game)
 
-        final_move = agent.new_action(old_state)
+        final_move = agent.next_move(old_state)
 
         reward, is_finished, score = game.play_step(final_move)
 
         new_state = agent.current_state(game)
 
-        agent.learn_from_one_step(
+        agent.learn_from_step(
             old_state, final_move, reward, new_state, is_finished)
 
         agent.save_progress(old_state, final_move, reward, new_state, is_finished)
 
         if is_finished:
             game.reset()
-            agent.n_games += 1
-            agent.learn_from_one_game()
+            agent.number_of_games += 1
 
             if score > record:
                 record = score
                 agent.model.save()
 
-            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+            print('Game -> ', agent.number_of_games, 'Score -> ', score, 'Max score -> ', max_score)
 
 
 if __name__ == '__main__':
