@@ -103,17 +103,15 @@ def train():
         agent.learn_from_step(
             old_state, final_move, reward, new_state, is_finished)
 
-        agent.save_progress(old_state, final_move, reward, new_state, is_finished)
-
         if is_finished:
             game.reset()
             agent.number_of_games += 1
 
-            if score > record:
-                record = score
+            if score > max_score:
+                max_score = score
                 agent.model.save()
 
-            print('Game -> ', agent.number_of_games, 'Score -> ', score, 'Max score -> ', max_score)
+            print('Game Number -> ', agent.number_of_games, 'Score -> ', score, 'Max score -> ', max_score)
 
 
 if __name__ == '__main__':
