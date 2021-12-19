@@ -10,7 +10,7 @@ from view import SnakeGameAI, Direction, Point
 class AI_agent:
 
     def __init__(self):
-        self.number_of_random_moves = 69
+        self.number_of_random_moves = 80
         self.learning_rate = 0.001
         self.number_of_games = 0
         self.discount_rate = 0.9  
@@ -64,7 +64,7 @@ class AI_agent:
         return np.array(state, dtype=int)
 
     def reduce_number_of_random_moves(self):
-        self.number_of_random_moves = self.number_of_random_moves - self.number_of_games
+        self.number_of_random_moves = 0 - self.number_of_games
 
     def learn_from_step(self, state, action, reward, next_state, is_finished):
         self.trainer.learn_from_one_step(state, action, reward, next_state, is_finished)
@@ -72,7 +72,7 @@ class AI_agent:
     def next_move(self, state):
         self.reduce_number_of_random_moves()
         final_move_template = [0, 0, 0]
-        if random.randint(0, 155) < self.number_of_random_moves:
+        if random.randint(0, 200) < self.number_of_random_moves:
             move_index = random.randint(0, 2)
             final_move_template[move_index] = 1
         else:
@@ -106,6 +106,11 @@ def train():
 
             if score > max_score:
                 max_score = score
+                agent.model.save_state(max_score)
+                File_object = open("./model/records.txt","a")
+                File_object.writelines(str(max_score))
+                File_object.close()
+                
 
             print('Game Number -> ', agent.number_of_games, 'Score -> ', score, 'Max score -> ', max_score)
 

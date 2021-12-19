@@ -9,20 +9,36 @@ class Neural_Network(nn.Module):
         super().__init__()
         self.linear_layer_one = nn.Linear(input_size, hidden_size)
         self.linear_layer_two = nn.Linear(hidden_size, output_size)
+        
+        print("Trying to load my brain")
+        File_object = open("./model/records.txt","r")
+        self.file_path='./model/71model.pth'
+        if os.path.exists(self.file_path):
+            self.load_state_dict(torch.load(self.file_path))
+            print("I am smart now :)")
+        else:
+            print("Sorry i could not load my brain :(")
+
 
     def forward(self, x):
         # activation function -- activates tensor x 
         x = F.relu(self.linear_layer_one(x))
         x = self.linear_layer_two(x)
         return x 
+
+    def save_state(self, number_of_games):
+        print("Backuping my brain!")
+        torch.save(self.state_dict(), "./model/"+str(number_of_games)+"model.pth")
+        
         
 class Reinforcment_Learner:
     def __init__(self, model, learning_rate, discount_rate):
         self.learning_rate = learning_rate
         self.discount_rate = discount_rate
         self.model = model
-        self.optimizer = optim.SGD(model.parameters(), learning_rate=self.learning_rate, momentum=0.5)
+        self.optimizer = optim.Adam(model.parameters(), lr=self.learning_rate)
         self.criterion = nn.MSELoss()
+
 
     def learn_from_one_step(self, state, action, reward, next_state, is_finished):
         state = torch.tensor(state, dtype=torch.float)
