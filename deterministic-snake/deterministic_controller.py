@@ -7,7 +7,7 @@ class DeterministicAgent:
     def get_state(self, game):
         return [game.food.x, game.food.y, game.head.x, game.head.y]
 
-    def get_action(self, state, game):
+    def new_action(self, state, game):
         point_head = Point(state[2], state[3])
         point_food = Point(state[0], state[1])
 
@@ -100,16 +100,16 @@ def run():
     game = SnakeGameAI()
     while True:
         # get old state
-        state_old = agent.get_state(game)
+        old_state = agent.get_state(game)
 
         # get move
-        final_move = agent.get_action(state_old, game)
+        final_move = agent.new_action(old_state, game)
 
         # perform move and get new state
-        reward, done, score = game.play_step(final_move)
-        state_new = agent.get_state(game)
+        reward, is_finished, score = game.play_step(final_move)
+        new_state = agent.get_state(game)
 
-        if done:
+        if is_finished:
             game.reset()
 
 

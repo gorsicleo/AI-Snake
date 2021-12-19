@@ -70,23 +70,23 @@ class AI_agent:
 
         return np.array(state, dtype=int)
 
-    def save_progress(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done))
+    def save_progress(self, state, action, reward, next_state, is_finished):
+        self.memory.append((state, action, reward, next_state, is_finished))
 
-    def train_long_memory(self):
+    def learn_from_one_game(self):
         if len(self.memory) > self.sample_size:
             mini_sample = random.sample(
                 self.memory, self.sample_size)  # list of tuples
         else:
             mini_sample = self.memory
 
-        for state, action, reward, next_state, done in mini_sample:
-            self.trainer.train_step(state, action, reward, next_state, done)
+        for state, action, reward, next_state, is_finished in mini_sample:
+            self.trainer.train_step(state, action, reward, next_state, is_finished)
 
-    def learn_from_one_step(self, state, action, reward, next_state, done):
-        self.trainer.train_step(state, action, reward, next_state, done)
+    def learn_from_one_step(self, state, action, reward, next_state, is_finished):
+        self.trainer.train_step(state, action, reward, next_state, is_finished)
 
-    def get_action(self, state):
+    def new_action(self, state):
         self.randomness = 80 - self.n_games
         final_move = [0, 0, 0]
         if random.randint(0, 200) < self.randomness:
@@ -106,28 +106,23 @@ def train():
     agent = AI_agent()
     game = SnakeGameAI()
     while True:
-        # get old state
-        state_old = agent.current_state(game)
+        old_state = agent.current_state(game)
 
-        # get move
-        final_move = agent.get_action(state_old)
+        final_move = agent.new_action(old_state)
 
-        # perform move and get new state
-        reward, done, score = game.play_step(final_move)
-        state_new = agent.current_state(game)
+        reward, is_finished, score = game.play_step(final_move)
 
-        # train short memory
+        new_state = agent.current_state(game)
+
         agent.learn_from_one_step(
-            state_old, final_move, reward, state_new, done)
+            old_state, final_move, reward, new_state, is_finished)
 
-        # save_progress
-        agent.save_progress(state_old, final_move, reward, state_new, done)
+        agent.save_progress(old_state, final_move, reward, new_state, is_finished)
 
-        if done:
-            # train long memory, plot result
+        if is_finished:
             game.reset()
             agent.n_games += 1
-            agent.train_long_memory()
+            agent.learn_from_one_game()
 
             if score > record:
                 record = score
