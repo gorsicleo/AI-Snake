@@ -7,22 +7,24 @@ from view import SnakeGameAI, Direction, Point
 from model import Linear_QNet, QTrainer
 from view import SnakeGameAI, Direction, Point
 
-MAX_MEMORY = 100_000
-BATCH_SIZE = 1000
-LR = 0.001
+
 
 
 class AI_agent:
 
     def __init__(self):
+
+        self.max_memory = 100000
+        self.sample_size = 1000
+        self.learning_rate = 0.001
         self.n_games = 0
         self.randomness = 0  
         self.discount_rate = 0.9  
-        self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
+        self.memory = deque(maxlen=self.max_memory) 
         self.model = Linear_QNet(11, 256, 3)
-        self.trainer = QTrainer(self.model, lr=LR, discount_rate=self.discount_rate)
+        self.trainer = QTrainer(self.model, lr=self.learning_rate, discount_rate=self.discount_rate)
 
-    def get_state(self, game):
+    def current_state(self, game):
         head = game.snake[0]
         point_l = Point(head.x - 20, head.y)
         point_r = Point(head.x + 20, head.y)
@@ -68,23 +70,20 @@ class AI_agent:
 
         return np.array(state, dtype=int)
 
-    def remember(self, state, action, reward, next_state, done):
-        # popleft if MAX_MEMORY is reached
+    def save_progress(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
-        if len(self.memory) > BATCH_SIZE:
+        if len(self.memory) > self.sample_size:
             mini_sample = random.sample(
-                self.memory, BATCH_SIZE)  # list of tuples
+                self.memory, self.sample_size)  # list of tuples
         else:
             mini_sample = self.memory
 
-        states, actions, rewards, next_states, dones = zip(*mini_sample)
-        self.trainer.train_step(states, actions, rewards, next_states, dones)
-        # for state, action, reward, nexrt_state, done in mini_sample:
-        #    self.trainer.train_step(state, action, reward, next_state, done)
+        for state, action, reward, next_state, done in mini_sample:
+            self.trainer.train_step(state, action, reward, next_state, done)
 
-    def train_short_memory(self, state, action, reward, next_state, done):
+    def learn_from_one_step(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_action(self, state):
@@ -103,29 +102,26 @@ class AI_agent:
 
 
 def train():
-    plot_scores = []
-    plot_mean_scores = []
-    total_score = 0
     record = 0
     agent = AI_agent()
     game = SnakeGameAI()
     while True:
         # get old state
-        state_old = agent.get_state(game)
+        state_old = agent.current_state(game)
 
         # get move
         final_move = agent.get_action(state_old)
 
         # perform move and get new state
         reward, done, score = game.play_step(final_move)
-        state_new = agent.get_state(game)
+        state_new = agent.current_state(game)
 
         # train short memory
-        agent.train_short_memory(
+        agent.learn_from_one_step(
             state_old, final_move, reward, state_new, done)
 
-        # remember
-        agent.remember(state_old, final_move, reward, state_new, done)
+        # save_progress
+        agent.save_progress(state_old, final_move, reward, state_new, done)
 
         if done:
             # train long memory, plot result
