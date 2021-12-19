@@ -9,7 +9,8 @@ class Neural_Network(nn.Module):
         super().__init__()
         self.linear_layer_one = nn.Linear(input_size, hidden_size)
         self.linear_layer_two = nn.Linear(hidden_size, output_size)
-        self.load_state_dict(torch.load('./saved_state.pth'))
+        file_name = os.path.join('./', 'saved_state.pth')
+        self.load_state_dict(torch.load(file_name))
 
     def forward(self, tensor):
         # activation function
