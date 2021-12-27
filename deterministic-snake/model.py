@@ -1,8 +1,10 @@
+from numpy import dtype
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
+import time
 
 class Neural_Network(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -31,7 +33,7 @@ class Neural_Network(nn.Module):
         torch.save(self.state_dict(), "./model/"+str(number_of_games)+"model.pth")
         
         
-class Reinforcment_Learner:
+class Deterministic_AI_Learner:
     def __init__(self, model, learning_rate, discount_rate):
         self.learning_rate = learning_rate
         self.discount_rate = discount_rate
@@ -40,31 +42,22 @@ class Reinforcment_Learner:
         self.criterion = nn.MSELoss()
 
 
-    def learn_from_one_step(self, state, action, reward, next_state, is_finished):
+    def learn_from_one_step(self, state, deterministic_action):
         state = torch.tensor(state, dtype=torch.float)
-        next_state = torch.tensor(next_state, dtype=torch.float)
-        action = torch.tensor(action, dtype=torch.long)
-        reward = torch.tensor(reward, dtype=torch.float)
+        deterministic_action = torch.tensor(deterministic_action, dtype=torch.float)
 
         if len(state.shape) == 1:
             state = torch.unsqueeze(state, 0)
-            next_state = torch.unsqueeze(next_state, 0)
-            action = torch.unsqueeze(action, 0)
-            reward = torch.unsqueeze(reward, 0)
-            is_finished = (is_finished, )
+            deterministic_action = torch.unsqueeze(deterministic_action,0)
         
         prediction_for_next_move = self.model(state)
-
-        prediction_after_bellman = prediction_for_next_move.clone()
-        for idx in range(len(is_finished)):
-            Q_new = reward[idx]
-            if not is_finished[idx]:
-                Q_new = reward[idx] + self.discount_rate * torch.max(self.model(next_state[idx]))
-
-            prediction_after_bellman[idx][torch.argmax(action[idx]).item()] = Q_new
-
+    
         self.optimizer.zero_grad()
-        loss = self.criterion(prediction_after_bellman, prediction_for_next_move)
+        #print("------------------model print------------------")
+        #print(deterministic_action)
+        #print(prediction_for_next_move)
+        #print("------------------end model print------------------")
+        loss = self.criterion(deterministic_action, prediction_for_next_move)
         loss.backward()
 
         self.optimizer.step()

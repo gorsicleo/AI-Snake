@@ -4,10 +4,10 @@ import random
 import numpy as np
 from collections import deque
 from view import SnakeGameAI, Direction, Point
-from model import Neural_Network, Reinforcment_Learner
+from model import Neural_Network, Deterministic_AI_Learner
 from view import SnakeGameAI, Direction, Point
 
-number_of_deterministic_games_played = 20
+
 
 def calculate_distance(point_a, point_b):
         return math.hypot(point_a.x - point_b.x, point_a.y - point_b.y)
@@ -105,7 +105,7 @@ class AI_agent:
         self.number_of_games = 0
         self.discount_rate = 0.9  
         self.model = Neural_Network(11, 256, 3)
-        self.trainer = Reinforcment_Learner(self.model, learning_rate=self.learning_rate, discount_rate=self.discount_rate)
+        self.trainer = Deterministic_AI_Learner(self.model, learning_rate=self.learning_rate, discount_rate=self.discount_rate)
     
     
     
@@ -159,10 +159,10 @@ class AI_agent:
     def reduce_number_of_random_moves(self):
         self.number_of_random_moves = 0 - self.number_of_games
 
-    def learn_from_step(self, state, action, reward, next_state, is_finished):
-        self.trainer.learn_from_one_step(state, action, reward, next_state, is_finished)
+    def learn_from_step(self, state, deterministic_move):
+        self.trainer.learn_from_one_step(state, deterministic_move)
 
-    def next_move(self, state, game):
+    def next_move(self, state, game, number_of_deterministic_games_played):
         move = None
         if number_of_deterministic_games_played>0:
             deterministic_state = get_deterministic_state(game)
@@ -181,22 +181,20 @@ def train():
     max_score = 0
     agent = AI_agent()
     game = SnakeGameAI()
+    number_of_deterministic_games_played = 5
     while True:
         old_state = agent.current_state(game)
-
-        final_move = agent.next_move(old_state, game)
-
+        deterministic_state = get_deterministic_state(game)
+        move = next_deterministic_move(deterministic_state, game)
+        final_move = agent.next_move(old_state, game, number_of_deterministic_games_played)
         reward, is_finished, score = game.play_step(final_move)
 
-        new_state = agent.current_state(game)
-
-        agent.learn_from_step(
-            old_state, final_move, reward, new_state, is_finished)
+        agent.learn_from_step(old_state, move)
 
         if is_finished:
             game.reset()
             agent.number_of_games += 1
-            number_of_deterministic_games_played = number_of_deterministic_games_played - 1
+            number_of_deterministic_games_played -=  1
 
             if score > max_score:
                 max_score = score
