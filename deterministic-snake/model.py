@@ -12,7 +12,7 @@ class Neural_Network(nn.Module):
         
         print("Trying to load my brain")
         File_object = open("./model/records.txt","r")
-        self.file_path='./model/71model.pth'
+        self.file_path='./model/-171model.pth'
         if os.path.exists(self.file_path):
             self.load_state_dict(torch.load(self.file_path))
             print("I am smart now :)")
