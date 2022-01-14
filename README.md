@@ -13,18 +13,17 @@ Organization of program was inspired by MVC arhitecture:
 * _view_ is game environment itself (or in other words: board where snake is going to move) built using pygame framework,
 * _controller_ plays the game.
 
-* Here is an example of **deterministic agent** playing the game:
+Here is an example of **deterministic agent** playing the game:
 
-<div><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/example3.gif" align="left" height="300" width="300" ><div>
+![Deterministic_gameplay](https://github.com/gorsicleo/AI-Snake/blob/main/examples/example3.gif)
 
-* Here are examples of **AI agent** playing the game in the early stage of learning (his first game ever):
-<div><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(20).gif" align="left" height="300" width="300" ></div>
+Here are examples of **AI agent** playing the game in the early stage of learning (his first game ever):
 
+![AI_gameplay1](https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(20).gif)
 
-* and example of AI agent after 30 games played (10 moves played by deterministic agent and 20 moves AI agent):
+and example of AI agent after 30 games played (10 moves played by deterministic agent and 20 moves AI agent):
 
-<div><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(30).gif" align="left" height="300" width="300" ><div>
-
+![AI_gameplay2](https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(30).gif)
 
 
 ## Running the program
