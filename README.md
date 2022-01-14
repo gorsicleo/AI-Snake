@@ -9,9 +9,9 @@ Currently there is no option for user to play the game!
 ## Overwiev
 
 Organization of program was inspired by MVC arhitecture:
-_model_ models learning mechanism and simple neural network built using pytorch framework,
-_view_ is game environment itself (or in other words: board where snake is going to move) built using pygame framework,
-_controller_ plays the game.
+* _model_ models learning mechanism and simple neural network built using pytorch framework,
+* _view_ is game environment itself (or in other words: board where snake is going to move) built using pygame framework,
+* _controller_ plays the game.
 
 Here is an example of **deterministic agent** playing the game:
 
@@ -21,9 +21,10 @@ Here are examples of **AI agent** playing the game in the early stage of learnin
 
 ![AI_gameplay1](https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(20).gif)
 
-and example of AI agent after 30 games played (10 moves played by deterministic agnet and 20 moves AI agent):
+and example of AI agent after 30 games played (10 moves played by deterministic agent and 20 moves AI agent):
 
-![AI_gameplay2](https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(30).gif)
+<a href="url"><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(30).gif" align="left" height="48" width="48" ></a>
+
 
 
 ## Running the program
@@ -43,14 +44,14 @@ For help with installation of these dependencies please refer to:
 2. [Pygame install](https://www.pygame.org/wiki/GettingStarted)
 3. [Pytorch install](https://pytorch.org/get-started/locally/)
 
-**bonus note for Windows users:** if you are having troubles with pytorch installation please create and open new pythoin environment and install pytorch from there (and start programs that require pytorch from that environment).
+**bonus note for Windows users:** if you are having troubles with pytorch installation please create and open new python environment and install pytorch from there (and start programs that require pytorch from that environment).
 
 ## Altering parameters
 
-To tweak learning a bit there are some parameters that could be tweaked (all of these parameters are in ai_controller.py file):
+To tweak learning a bit there are some parameters that could be changed (all of these parameters are in ai_controller.py file):
 
 * ` learning_rate ` on line 104 [Explanation](https://en.wikipedia.org/wiki/Learning_rate)
-* ` number_of_deterministic_games_played ` on line 184 represents how many games will deterministic agent play when game starts before AI agent makes moves, this is used to let neural network "see" some number of whole games played by determinisctic agent to increase learning.
+* ` number_of_deterministic_games_played ` on line 184 represents how many games will deterministic agent play when game starts before AI agent makes moves, this is used to let neural network "see" some number of whole games played by deterministic agent to increase learning.
 
 ## Model and brief explanation
 
