@@ -13,7 +13,7 @@ class Neural_Network(nn.Module):
         self.linear_layer_two = nn.Linear(hidden_size, output_size)
         
         print("Trying to load my brain")
-        File_object = open("./model/records.txt","r")
+        #File_object = open("./model/records.txt","r")
         self.file_path='./model/-171model.pth'
         if os.path.exists(self.file_path):
             self.load_state_dict(torch.load(self.file_path))
@@ -30,7 +30,7 @@ class Neural_Network(nn.Module):
 
     def save_state(self, number_of_games):
         print("Backuping my brain!")
-        torch.save(self.state_dict(), "./model/"+str(number_of_games)+"model.pth")
+        #torch.save(self.state_dict(), "./model/model.pth")
         
         
 class Deterministic_AI_Learner:

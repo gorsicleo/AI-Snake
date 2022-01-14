@@ -181,7 +181,7 @@ def train():
     max_score = 0
     agent = AI_agent()
     game = SnakeGameAI()
-    number_of_deterministic_games_played = 5
+    number_of_deterministic_games_played = 10
     while True:
         old_state = agent.current_state(game)
         deterministic_state = get_deterministic_state(game)
@@ -199,9 +199,9 @@ def train():
             if score > max_score:
                 max_score = score
                 agent.model.save_state(max_score)
-                File_object = open("./model/records.txt","a")
-                File_object.writelines(str(max_score))
-                File_object.close()
+                #File_object = open("./model/records.txt","a")
+                #File_object.writelines(str(max_score))
+                #File_object.close()
                 
 
             print('Game Number -> ', agent.number_of_games, 'Score -> ', score, 'Max score -> ', max_score)
