@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is simple snake game program that utilizes deterministic algorithm and three layer neural network in order to enable computer to play the game by itself.
+This is a simple snake game program that utilizes deterministic algorithm and three layer neural network in order to enable computer to play the game by itself.
 Currently there is no option for user to play the game!
 
 
@@ -54,7 +54,7 @@ To tweak learning a bit there are some parameters that could be changed (all of 
 
 ## Model and brief explanation
 
-Neural network used in AI agent is simple neural network with 3 layers. First layer has 11 input nodes representing current state of the game, second layer is "hidden layer" with 256 nodes (arbitrary) and third layer has only 3 output nodes representing all possible snake moves (turn right, turn left, continue straight).
+Neural network used in AI agent is a simple neural network with 3 layers. First layer has 11 input nodes representing current state of the game, second layer is "hidden layer" with 256 nodes (arbitrary) and third layer has only 3 output nodes representing all possible snake moves (turn right, turn left, continue straight).
 
 This program uses [Adam optimizer](https://optimization.cbe.cornell.edu/index.php?title=Adam) with MSE as optimizer criterion that is fed with move that _would_ be played by deterministic algorithm and neural network output in order to calculate loss.
 
