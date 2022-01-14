@@ -15,15 +15,15 @@ Organization of program was inspired by MVC arhitecture:
 
 * Here is an example of **deterministic agent** playing the game:
 
-<a href="url"><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/example3.gif" align="left" height="300" width="300" ></a>
+<div><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/example3.gif" align="left" height="300" width="300" ><div>
 
 * Here are examples of **AI agent** playing the game in the early stage of learning (his first game ever):
-<a href="url"><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(20).gif" align="left" height="300" width="300" ></a>
+<div><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(20).gif" align="left" height="300" width="300" ></div>
 
 
 * and example of AI agent after 30 games played (10 moves played by deterministic agent and 20 moves AI agent):
 
-<a href="url"><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(30).gif" align="left" height="300" width="300" ></a>
+<div><img src="https://github.com/gorsicleo/AI-Snake/blob/main/examples/exampleAI(30).gif" align="left" height="300" width="300" ><div>
 
 
 
