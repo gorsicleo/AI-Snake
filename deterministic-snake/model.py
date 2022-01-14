@@ -34,9 +34,9 @@ class Neural_Network(nn.Module):
         
         
 class Deterministic_AI_Learner:
-    def __init__(self, model, learning_rate, discount_rate):
+    def __init__(self, model, learning_rate):
         self.learning_rate = learning_rate
-        self.discount_rate = discount_rate
+        
         self.model = model
         self.optimizer = optim.Adam(model.parameters(), lr=self.learning_rate)
         self.criterion = nn.MSELoss()

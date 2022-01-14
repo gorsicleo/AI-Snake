@@ -100,12 +100,10 @@ def next_deterministic_move(state, game):
 class AI_agent:
 
     def __init__(self):
-        self.number_of_random_moves = 80
         self.learning_rate = 0.001
-        self.number_of_games = 0
-        self.discount_rate = 0.9  
+        self.number_of_games = 0 
         self.model = Neural_Network(11, 256, 3)
-        self.trainer = Deterministic_AI_Learner(self.model, learning_rate=self.learning_rate, discount_rate=self.discount_rate)
+        self.trainer = Deterministic_AI_Learner(self.model, learning_rate=self.learning_rate)
     
     
     
@@ -181,7 +179,7 @@ def train():
     max_score = 0
     agent = AI_agent()
     game = SnakeGameAI()
-    number_of_deterministic_games_played = 10
+    number_of_deterministic_games_played = 0
     while True:
         old_state = agent.current_state(game)
         deterministic_state = get_deterministic_state(game)
